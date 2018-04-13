@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>javascript calculator</title>
+    </head>
+    <body>
+        <div class="cal_result">
+           <input type="text" class="txt_input" onkeydown="checkKeysInt(event, '')" onkeyup="checkKeysInt(event, '')", value="">     
+        </div>
+        <div class="cal_buttons">
+            <tr class="operator">
+                <button value="+" id="btn_add">+</button>
+                <button value="-" id="btn_subtract">-</button>
+                <button value="=" id="btn_result">=</button>
+            </tr>
+        </div>
+        <div>
+            <textarea class="txt_process" rows="5"></textarea>
+        </div>
+        <script>
+            const OPERATOR_ADD = "+";
+            const OPERATOR_SUBTRACT = "-";
+            var prev_value = "";
+            var cur_operator = "";
+            var isOperatorClick = false;
+
+            document.getElementById("btn_add").addEventListener("click", function(){clickOperator(OPERATOR_ADD)});
+            document.getElementById("btn_subtract").addEventListener("click", function(){clickOperator(OPERATOR_SUBTRACT)});
+            document.getElementById("btn_result").addEventListener("click", function(){                
+                if(prev_value != ""){
+                    console.log("result_prev_value: " + prev_value);
+                    if(cur_operator != "") calculate(prev_value, cur_operator);                    
+                    prev_value = cur_operator = "";
+                    document.querySelector(".txt_process").value = document.querySelector(".txt_input").value;
+                }
+            });
+            
+            function clickOperator(operator){
+                if(prev_value != ""){
+                    if(cur_operator != "") calculate(prev_value,cur_operator);
+                    else                   calculate(prev_value,operator);
+                }
+                cur_operator = operator;
+                prev_value = document.querySelector(".txt_input").value;
+                document.querySelector(".txt_process").value += operator;
+                document.querySelector(".txt_input").focus();
+                isOperatorClick = true;
+            }
+
+            function calculate(value_1, operator){
+                if(operator == OPERATOR_ADD){
+                    document.querySelector(".txt_input").value = add(value_1, document.querySelector(".txt_input").value);
+                } else if(operator == OPERATOR_SUBTRACT){
+                    document.querySelector(".txt_input").value = subtract(value_1, document.querySelector(".txt_input").value);
+                }
+            }
+
+            function add(num1, num2){
+                return Number(num1) + Number(num2);
+            }
+            function subtract(num1, num2){
+                return Number(num1) - Number(num2);
+            }
+
+            function operatorCheck(){
+                if(isOperatorClick){
+                    document.querySelector(".txt_input").value = "";
+                    isOperatorClick = false;
+                }
+            }
+
+            function inputValue(){
+                 var input_value = document.querySelector(".txt_input").value;
+                var len = input_value.length;
+                var last_value = input_value[input_value.length - 1];          
+                document.querySelector(".txt_process").value += last_value;
+            }
+
+            function checkKeysInt(e, event) {
+                if(event.keyCode) {
+                    var code = event.keyCode;
+                    if ((code >= 48 && code <= 57) || (code >= 96 && code <= 105) || (code==8) || (code==9) || (code==46)) {
+                        if(e.type == "keydown")     operatorCheck();
+                        else if(e.type == "keyup")  inputValue();
+                        return;
+                    } else {
+                        e.returnValue = false;
+                    }
+                } else if (e.which) {
+                    var code = e.which;
+                    if ((code >= 48 && code <= 57) || (code >= 96 && code <= 105) || (code==8) || (code==9) || (code==46)) {
+                        if(e.type == "keydown")     operatorCheck();
+                        else if(e.type == "keyup")  inputValue();
+                        return;
+                    } else {
+                      e.preventDefault();
+                    }
+                }
+            }
+
+        </script>    
+    </body>
+</html>
